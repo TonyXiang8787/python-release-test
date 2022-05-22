@@ -9,37 +9,45 @@ on:
 jobs:
   build-python:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-    - name: build
-      run: pip wheel -v --no-deps -w wheelhouse .
+      - name: build
+        run: pip wheel -v --no-deps -w wheelhouse .
 
-    - name: Keep wheel files
-      uses: actions/upload-artifact@v3
-       with:
-        name: wheelhouse
-        path: ./wheelhouse/*.whl
+      - name: Keep wheel files
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheelhouse
+          path: ./wheelhouse/*.whl
 
-    - name: Keep version
-      uses: actions/upload-artifact@v3
-       with:
-        name: version
-        path: PYPI_VERSION
+      - name: Keep version
+        uses: actions/upload-artifact@v3
+        with:
+          name: version
+          path: PYPI_VERSION
 
   release:
-    - uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-    - uses: actions/download-artifact@v3
-      with:
-        name: wheelhouse
-        path: wheelhouse
-    
-    - uses: actions/download-artifact@v3
-      with:
-        name: version
-        path: .
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheelhouse
+          path: wheelhouse
+      
+      - uses: actions/download-artifact@v3
+        with:
+          name: version
+          path: .
 
-    - name: List wheels
-      run: ls ./wheelhouse/*.whl -al
+      - name: List wheels
+        run: |
+          ls ./wheelhouse/*.whl -al
+          cat PYPI_VERSION
 
