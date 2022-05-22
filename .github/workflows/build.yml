@@ -1,0 +1,45 @@
+name: Build python
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  build-python:
+    runs-on: ubuntu-latest
+
+    - uses: actions/checkout@v3
+
+    - name: build
+      run: pip wheel -v --no-deps -w wheelhouse .
+
+    - name: Keep wheel files
+      uses: actions/upload-artifact@v3
+       with:
+        name: wheelhouse
+        path: ./wheelhouse/*.whl
+
+    - name: Keep version
+      uses: actions/upload-artifact@v3
+       with:
+        name: version
+        path: PYPI_VERSION
+
+  release:
+    - uses: actions/checkout@v3
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: wheelhouse
+        path: wheelhouse
+    
+    - uses: actions/download-artifact@v3
+      with:
+        name: version
+        path: .
+
+    - name: List wheels
+      run: ls ./wheelhouse/*.whl -al
+
