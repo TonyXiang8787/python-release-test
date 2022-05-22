@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - 'release/**'
+  # run pipeline on pull request
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build-python:
@@ -67,4 +71,4 @@ jobs:
           files: |
             ./wheelhouse/*.whl
           tag_name: ${{ steps.tag.outputs.tag }}
-
+          prerelease: ${{ contains(steps.tag.outputs.tag, 'rc') }}
