@@ -51,11 +51,14 @@ jobs:
           path: .
 
       - name: List assets
-        id: assets
         run: |
           ls ./wheelhouse/*.whl -al
           cat PYPI_VERSION
           echo "::set-output name=tag::v$(cat PYPI_VERSION)"
+
+      - name: Get tag
+        id: tag
+        run: echo "::set-output name=tag::v$(cat PYPI_VERSION)"
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -63,5 +66,5 @@ jobs:
         with:
           files: |
             ./wheelhouse/*.whl
-          tag_name: ${{ steps.assets.outputs.tag }}
+          tag_name: ${{ steps.tag.outputs.tag }}
 
